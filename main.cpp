@@ -11,7 +11,7 @@
 
 using namespace std;
 
-const string baseDir = "/home/antonio/Documents/M.C.C/Tesis/Dataset/Microsoft/pumpkin/seq-01/";
+const string baseDir = "/home/antonio/Documents/M.C.C/Tesis/Dataset/Microsoft/heads/seq-02/";
 const string vocDir = "./Vocabulary/voc_TUM_ORB_ORB.yml.gz";
 
 int main()

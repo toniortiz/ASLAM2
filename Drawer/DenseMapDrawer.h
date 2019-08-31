@@ -25,6 +25,9 @@ public:
 
     int size();
     int memory();
+    double resolution();
+
+    void setResolution(double res);
 
 private:
     void update(KeyFrame* pKF);

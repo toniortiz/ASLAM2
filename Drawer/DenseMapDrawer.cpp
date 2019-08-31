@@ -41,7 +41,7 @@ void DenseMapDrawer::run()
                     update(kf);
                 else {
                     kf->createPointCloud(5);
-                    //                    kf->downsample(0.03f);
+                    kf->downsample(0.01f);
                     //                    kf->passThroughFilter("z", 0.1f, 5.1f);
                     kf->statisticalFilter(50, 1.0);
                     update(kf);
@@ -56,7 +56,7 @@ void DenseMapDrawer::run()
 
                 if (!kf->hasPointCloud()) {
                     kf->createPointCloud(5);
-                    //                    kf->downsample(0.03f);
+                    kf->downsample(0.01f);
                     //                    kf->passThroughFilter("z", 0.1f, 5.1f);
                     kf->statisticalFilter(50, 1.0);
 
@@ -240,6 +240,18 @@ int DenseMapDrawer::memory()
 {
     unique_lock<mutex> lock(_mutexOctomap);
     return int(_octomap.memoryUsage());
+}
+
+double DenseMapDrawer::resolution()
+{
+    unique_lock<mutex> lock(_mutexOctomap);
+    return _octomap.getResolution();
+}
+
+void DenseMapDrawer::setResolution(double res)
+{
+    unique_lock<mutex> lock(_mutexOctomap);
+    _octomap.setResolution(res);
 }
 
 bool DenseMapDrawer::checkFinish()
