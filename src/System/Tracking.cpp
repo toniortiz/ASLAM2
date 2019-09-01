@@ -13,6 +13,7 @@
 #include "Mapping.h"
 #include "PlaceRecognition/KeyFrameDatabase.h"
 #include "PlaceRecognition/LoopClosing.h"
+#include "Solver/Gicp.h"
 #include "Solver/PnPRansac.h"
 #include "Solver/SE3solver.h"
 #include "System.h"
@@ -306,54 +307,12 @@ bool Tracking::trackWithMotionModel()
 
     _viewer->setRansacError(ransac._rmse);
 
-    /*
-    double tau_1 = 5;
-    double tau_2 = 20;
-    double miu = 20;
-    double acumres = 0.0;
-    double meanres = 0.0;
-    for (auto& m : ransac._inliers) {
-        const cv::Point3f& src = _prevFrame->getCameraPoint(m.queryIdx);
-        const cv::Point3f& tgt = _curFrame->getCameraPoint(m.trainIdx);
-
-        cv::Mat xs = (cv::Mat_<float>(3, 1) << src.x, src.y, src.z);
-        cv::Mat xt = (cv::Mat_<float>(3, 1) << tgt.x, tgt.y, tgt.z);
-
-        cv::Mat T = ransac._T;
-        cv::Mat R = T.rowRange(0, 3).colRange(0, 3);
-        cv::Mat t = T.rowRange(0, 3).col(3);
-
-        cv::Mat xs_t = R * xs + t;
-        double res = cv::norm(xs_t, xt, cv::NORM_L2SQR);
-        acumres += res;
+    if (ransac._rmse > 1.0f) {
+        Gicp icp(_prevFrame, _curFrame, ransac._inliers);
+        icp.setIterations(10).setCorrespondenceDistance(0.06);
+        icp.compute(ransac._T);
+        _viewer->setIcpScore(icp._score);
     }
-    meanres = acumres / ransac._inliers.size();
-    cout << meanres << endl;
-*/
-    /*
-        if (bOK) {
-            if (ransac._rmse > 1.0f) {
-                if (ransac._rmse > 1.5f) {
-                    Gicp gicp(_prevFrame.get(), _curFrame.get(), matches);
-                    gicp.setIterations(15).setCorrespondenceDistance(0.08);
-                    cv::Mat guess = cv::Mat::eye(4, 4, CV_32F);
-                    bOK = gicp.compute(guess);
-                    _viewer->setIcpScore(gicp._score);
-                } else {
-                    Gicp gicp(_prevFrame.get(), _curFrame.get(), ransac._inliers);
-                    gicp.setIterations(8).setCorrespondenceDistance(0.07);
-                    bOK = gicp.compute(ransac._T);
-                    _viewer->setIcpScore(gicp._score);
-                }
-            }
-        } else {
-            Gicp gicp(_prevFrame.get(), _curFrame.get(), matches);
-            gicp.setIterations(20).setCorrespondenceDistance(0.08);
-            cv::Mat guess = cv::Mat::eye(4, 4, CV_32F);
-            bOK = gicp.compute(guess);
-            _viewer->setIcpScore(gicp._score);
-        }
-*/
 
     {
         unique_lock<mutex> locks(_stats.mMutex);

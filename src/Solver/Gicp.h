@@ -3,22 +3,14 @@
 
 #include "System/Common.h"
 #include <opencv2/features2d.hpp>
-#include <pcl/point_cloud.h>
-#include <pcl/point_types.h>
-
-class Frame;
 
 class Gicp {
 public:
     SMART_POINTER_TYPEDEFS(Gicp);
 
-    typedef pcl::PointXYZ PointT;
-    typedef pcl::PointCloud<PointT> PointCloudT;
+    Gicp(FramePtr pF1, FramePtr pF2, const std::vector<cv::DMatch>& vMatches);
 
-public:
-    Gicp(Frame* pF1, Frame* pF2, const std::vector<cv::DMatch>& vMatches);
-
-    bool compute(cv::Mat& guess);
+    bool compute(const SE3& guess);
 
     Gicp& setCorrespondenceDistance(double dist);
     Gicp& setIterations(int iters);
@@ -26,14 +18,18 @@ public:
     Gicp& setTransformationEpsilon(double eps);
 
     double _score;
-    cv::Mat _T;
+    SE3 _T;
 
-protected:
-    Frame* _frame1;
-    Frame* _frame2;
+private:
+    void computeNormals(PointCloud::Ptr cloud,PointCloudNormal::Ptr normals, double radius);
 
-    PointCloudT::Ptr _srcCloud;
-    PointCloudT::Ptr _tgtCloud;
+    FramePtr _frame1;
+    FramePtr _frame2;
+
+    PointCloud::Ptr _srcCloud;
+    PointCloudNormal::Ptr _srcNormals;
+    PointCloud::Ptr _tgtCloud;
+    PointCloudNormal::Ptr _tgtNormals;
 
     // Parameters
     double _maxCorrespondenceDistance;

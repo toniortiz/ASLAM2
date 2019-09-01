@@ -138,6 +138,7 @@ add_library(${PROJECT_NAME} SHARED
     src/Solver/SE3solver.cpp
     src/Solver/PnPRansac.cpp
     src/Solver/BundleAdjustment.cpp
+    src/Solver/Gicp.cpp
 
     # Place Recognition
     src/PlaceRecognition/KeyFrameDatabase.cpp

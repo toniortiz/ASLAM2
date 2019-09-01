@@ -43,8 +43,14 @@ typedef Sophus::SE3d SE3;
 EIGEN_DEFINE_STL_VECTOR_SPECIALIZATION(Vec3)
 EIGEN_DEFINE_STL_VECTOR_SPECIALIZATION(Vec2)
 
-typedef pcl::PointXYZRGB PointT;
-typedef pcl::PointCloud<PointT> PointCloud;
+typedef pcl::PointXYZRGB PointColor;
+typedef pcl::PointCloud<PointColor> PointCloudColor;
+typedef pcl::PointXYZ Point;
+typedef pcl::PointCloud<Point> PointCloud;
+typedef pcl::PointXYZRGBNormal PointColorNormal;
+typedef pcl::PointCloud<PointColorNormal> PointCloudColorNormal;
+typedef pcl::PointNormal PointNormal;
+typedef pcl::PointCloud<PointNormal> PointCloudNormal;
 
 class Frame;
 typedef std::shared_ptr<Frame> FramePtr;

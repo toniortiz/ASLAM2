@@ -58,7 +58,7 @@ public:
     void statisticalFilter(int k, double stddev);
     void passThroughFilter(const std::string& field, float ll, float ul, const bool negate = false);
     bool hasPointCloud();
-    void createOctoCloud(PointCloud::Ptr worldCloud);
+    void createOctoCloud(PointCloudColor::Ptr worldCloud);
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
@@ -68,7 +68,7 @@ public:
     cv::Mat _grayIm;
     cv::Mat _depthIm;
 
-    PointCloud::Ptr _pointCloud;
+    PointCloudColor::Ptr _pointCloud;
     std::shared_ptr<octomap::Pointcloud> _octoCloud;
 
     static int _nextId;

@@ -77,7 +77,7 @@ void DenseMapDrawer::run()
 void DenseMapDrawer::update(KeyFrame* pKF)
 {
     SE3 Twc = pKF->getPoseInverse();
-    PointCloud::Ptr wc(new PointCloud);
+    PointCloudColor::Ptr wc(new PointCloudColor);
     pcl::transformPointCloud(*pKF->_pointCloud, *wc, Twc.matrix().cast<float>());
     pKF->createOctoCloud(wc);
 
@@ -86,7 +86,7 @@ void DenseMapDrawer::update(KeyFrame* pKF)
 
     unique_lock<mutex> lock(_mutexOctomap);
     _octomap.insertPointCloud(*pKF->_octoCloud, origin, -1, true);
-    for (PointCloud::const_iterator it = wc->begin(); it != wc->end(); it++) {
+    for (PointCloudColor::const_iterator it = wc->begin(); it != wc->end(); it++) {
         if (!isnan(it->x) && !isnan(it->y) && !isnan(it->z)) {
             const int rgb = *reinterpret_cast<const int*>(&(it->rgb));
             unsigned char r = ((rgb >> 16) & 0xff);

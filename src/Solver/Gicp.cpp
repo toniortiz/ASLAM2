@@ -1,27 +1,41 @@
 #include "Gicp.h"
+#include "Core/Feature.h"
 #include "Core/Frame.h"
 #include "System/Converter.h"
+#include <pcl/features/normal_3d.h>
 #include <pcl/registration/gicp.h>
+#include <thread>
 
 using namespace std;
 
-Gicp::Gicp(Frame* pF1, Frame* pF2, const vector<cv::DMatch>& vMatches)
+Gicp::Gicp(FramePtr pF1, FramePtr pF2, const vector<cv::DMatch>& vMatches)
     : _frame1(pF1)
     , _frame2(pF2)
 {
-    _srcCloud = boost::make_shared<PointCloudT>();
-    _tgtCloud = boost::make_shared<PointCloudT>();
+    _srcCloud = boost::make_shared<PointCloud>();
+    _tgtCloud = boost::make_shared<PointCloud>();
 
     _srcCloud->points.reserve(vMatches.size());
     _tgtCloud->points.reserve(vMatches.size());
 
     for (const auto& m : vMatches) {
-        const cv::Point3f& p1 = pF1->_camPoints[m.queryIdx];
-        _srcCloud->points.push_back(PointT(p1.x, p1.y, p1.z));
+        const Vec3& p1 = pF1->_features[m.queryIdx]->_Xc;
+        _srcCloud->points.push_back(Point(p1.x(), p1.y(), p1.z()));
 
-        const cv::Point3f& p2 = pF2->_camPoints[m.trainIdx];
-        _tgtCloud->points.push_back(PointT(p2.x, p2.y, p2.z));
+        const Vec3& p2 = pF2->_features[m.trainIdx]->_Xc;
+        _tgtCloud->points.push_back(Point(p2.x(), p2.y(), p2.z()));
     }
+
+    _srcNormals.reset(new PointCloudNormal);
+    _tgtNormals.reset(new PointCloudNormal);
+    _srcNormals->points.reserve(_srcCloud->points.size());
+    _tgtNormals->points.reserve(_tgtCloud->points.size());
+
+    double radius = 0.3;
+    thread t1(&Gicp::computeNormals, this, _srcCloud, _srcNormals, radius);
+    thread t2(&Gicp::computeNormals, this, _tgtCloud, _tgtNormals, radius);
+    t1.join();
+    t2.join();
 
     // Default parameters
     _iterations = 15;
@@ -30,28 +44,28 @@ Gicp::Gicp(Frame* pF1, Frame* pF2, const vector<cv::DMatch>& vMatches)
     _transformationEpsilon = 1e-9;
 }
 
-bool Gicp::compute(cv::Mat& guess)
+bool Gicp::compute(const SE3& guess)
 {
     _score = numeric_limits<double>::max();
-    _T = cv::Mat();
+    _T = SE3(Mat44::Identity());
 
-    if (_srcCloud->points.size() < 20)
+    if (_srcNormals->points.size() < 20)
         return false;
 
-    pcl::GeneralizedIterativeClosestPoint<PointT, PointT> gicp;
-    gicp.setInputSource(_srcCloud);
-    gicp.setInputTarget(_tgtCloud);
+    pcl::GeneralizedIterativeClosestPoint<PointNormal, PointNormal> gicp;
+    gicp.setInputSource(_srcNormals);
+    gicp.setInputTarget(_tgtNormals);
     gicp.setMaximumIterations(_iterations);
     gicp.setMaxCorrespondenceDistance(_maxCorrespondenceDistance);
     gicp.setEuclideanFitnessEpsilon(_euclideanEpsilon);
     gicp.setTransformationEpsilon(_transformationEpsilon);
 
-    PointCloudT aligned;
-    gicp.align(aligned, Converter::toMatrix4f(guess));
+    PointCloudNormal aligned;
+    gicp.align(aligned, guess.matrix().cast<float>());
 
     if (gicp.hasConverged()) {
         _score = gicp.getFitnessScore();
-        _T = Converter::toMat<float, 4, 4>(gicp.getFinalTransformation());
+        _T = SE3(gicp.getFinalTransformation().cast<double>());
         _frame2->setPose(_T * _frame1->getPose());
         return true;
     } else
@@ -80,4 +94,15 @@ Gicp& Gicp::setTransformationEpsilon(double eps)
 {
     _transformationEpsilon = eps;
     return *this;
+}
+
+void Gicp::computeNormals(PointCloud::Ptr cloud, PointCloudNormal::Ptr normals, double radius)
+{
+    pcl::NormalEstimation<Point, PointNormal> ne;
+    ne.setInputCloud(cloud);
+
+    pcl::search::KdTree<Point>::Ptr tree(new pcl::search::KdTree<Point>());
+    ne.setSearchMethod(tree);
+    ne.setRadiusSearch(radius);
+    ne.compute(*normals);
 }

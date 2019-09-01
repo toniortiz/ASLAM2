@@ -282,7 +282,7 @@ void KeyFrame::createPointCloud(const int& res)
     if (hasPointCloud())
         return;
 
-    _pointCloud.reset(new PointCloud());
+    _pointCloud.reset(new PointCloudColor());
 
     // Create point cloud in camera frame
     for (int m = 0; m < _depthIm.rows; m += res) {
@@ -293,7 +293,7 @@ void KeyFrame::createPointCloud(const int& res)
                 continue;
 
             Vec3 xc = _camera->backproject(Vec2(n, m), z);
-            PointT p;
+            PointColor p;
             p.x = float(xc.x());
             p.y = float(xc.y());
             p.z = float(xc.z());
@@ -316,7 +316,7 @@ void KeyFrame::downsample(float leaf)
     if (!_pointCloud)
         return;
 
-    pcl::VoxelGrid<PointT> voxel;
+    pcl::VoxelGrid<PointColor> voxel;
     voxel.setLeafSize(leaf, leaf, leaf);
 
     voxel.setInputCloud(_pointCloud);
@@ -328,7 +328,7 @@ void KeyFrame::statisticalFilter(int k, double stddev)
     if (!_pointCloud)
         return;
 
-    pcl::StatisticalOutlierRemoval<PointT> sor;
+    pcl::StatisticalOutlierRemoval<PointColor> sor;
 
     sor.setInputCloud(_pointCloud);
     sor.setMeanK(k);
@@ -341,7 +341,7 @@ void KeyFrame::passThroughFilter(const string& field, float ll, float ul, const 
     if (!_pointCloud)
         return;
 
-    pcl::PassThrough<PointT> pass;
+    pcl::PassThrough<PointColor> pass;
     pass.setInputCloud(_pointCloud);
     pass.setFilterFieldName(field);
     pass.setFilterLimits(ll, ul);
@@ -356,12 +356,12 @@ bool KeyFrame::hasPointCloud()
     return _pointCloud != nullptr;
 }
 
-void KeyFrame::createOctoCloud(PointCloud::Ptr worldCloud)
+void KeyFrame::createOctoCloud(PointCloudColor::Ptr worldCloud)
 {
     _octoCloud.reset(new octomap::Pointcloud());
     _octoCloud->reserve(worldCloud->size());
 
-    for (PointCloud::const_iterator it = worldCloud->begin(); it != worldCloud->end(); it++) {
+    for (PointCloudColor::const_iterator it = worldCloud->begin(); it != worldCloud->end(); it++) {
         if (!isnan(it->z) || it->z <= 0)
             _octoCloud->push_back(it->x, it->y, it->z);
     }

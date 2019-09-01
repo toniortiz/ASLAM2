@@ -11,12 +11,12 @@
 
 using namespace std;
 
-const string baseDir = "/home/antonio/Documents/M.C.C/Tesis/Dataset/ICL/traj2_frei_png/";
-const string vocDir = "./Vocabulary/ORBvoc.txt";
+const string baseDir = "/home/antonio/Documents/M.C.C/Tesis/Dataset/TUM/rgbd_dataset_freiburg1_room/";
+const string vocDir = "./Vocabulary/voc_TUM_ORB_ORB.yml.gz";
 
 int main()
 {
-    Dataset::Ptr dataset(new DatasetICL());
+    Dataset::Ptr dataset(new DatasetTUM());
     dataset->open(baseDir);
     dataset->print(cout);
 
