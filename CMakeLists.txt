@@ -90,58 +90,58 @@ include_directories(${Sophus_INCLUDE_DIRS})
 #find_package(vikit_common REQUIRED)
 #include_directories(${vikit_common_INCLUDE_DIRS})
 
-include_directories(${PROJECT_SOURCE_DIR})
+include_directories(${PROJECT_SOURCE_DIR}/src)
 
 add_library(${PROJECT_NAME} SHARED
     # Core
-    Core/KeyFrame.cpp
-    Core/Map.cpp
-    Core/Frame.cpp
-    Core/Landmark.cpp
-    Core/GraphNode.cpp
-    Core/PinholeCamera.cpp
-    Core/Feature.cpp
+    src/Core/KeyFrame.cpp
+    src/Core/Map.cpp
+    src/Core/Frame.cpp
+    src/Core/Landmark.cpp
+    src/Core/GraphNode.cpp
+    src/Core/PinholeCamera.cpp
+    src/Core/Feature.cpp
 
     # System
-    System/System.cpp
-    System/Tracking.cpp
-    System/Mapping.cpp
-    System/Converter.cpp
-    System/Random.cpp
-    System/LocalMap.cpp
+    src/System/System.cpp
+    src/System/Tracking.cpp
+    src/System/Mapping.cpp
+    src/System/Converter.cpp
+    src/System/Random.cpp
+    src/System/LocalMap.cpp
 
     # Features
-    Features/ORBextractor.cpp
-    Features/Matcher.cpp
-    Features/DetectorAdjuster.cpp
-    Features/Extractor.cpp
-    Features/StatefulFeatureDetector.cpp
-    Features/SVOextractor.cpp
-    Features/VideoDynamicAdaptedFeatureDetector.cpp
-    Features/VideoGridAdaptedFeatureDetector.cpp
+    src/Features/ORBextractor.cpp
+    src/Features/Matcher.cpp
+    src/Features/DetectorAdjuster.cpp
+    src/Features/Extractor.cpp
+    src/Features/StatefulFeatureDetector.cpp
+    src/Features/SVOextractor.cpp
+    src/Features/VideoDynamicAdaptedFeatureDetector.cpp
+   src/Features/VideoGridAdaptedFeatureDetector.cpp
 
     # IO
-    IO/Dataset.cpp
-    IO/DatasetCORBS.cpp
-    IO/DatasetICL.cpp
-    IO/DatasetTUM.cpp
-    IO/DatasetMicrosoft.cpp
+    src/IO/Dataset.cpp
+    src/IO/DatasetCORBS.cpp
+    src/IO/DatasetICL.cpp
+    src/IO/DatasetTUM.cpp
+    src/IO/DatasetMicrosoft.cpp
 
     # Drawer
-    Drawer/MapDrawer.cpp
-    Drawer/Viewer.cpp
-    Drawer/DenseMapDrawer.cpp
+    src/Drawer/MapDrawer.cpp
+    src/Drawer/Viewer.cpp
+    src/Drawer/DenseMapDrawer.cpp
 
     # Solver
-    Solver/PoseGraph.cpp
-    Solver/Icp.cpp
-    Solver/SE3solver.cpp
-    Solver/PnPRansac.cpp
-    Solver/BundleAdjustment.cpp
+    src/Solver/PoseGraph.cpp
+    src/Solver/Icp.cpp
+    src/Solver/SE3solver.cpp
+    src/Solver/PnPRansac.cpp
+    src/Solver/BundleAdjustment.cpp
 
     # Place Recognition
-    PlaceRecognition/KeyFrameDatabase.cpp
-    PlaceRecognition/LoopClosing.cpp
+    src/PlaceRecognition/KeyFrameDatabase.cpp
+    src/PlaceRecognition/LoopClosing.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}

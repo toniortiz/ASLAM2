@@ -11,17 +11,17 @@
 
 using namespace std;
 
-const string baseDir = "/home/antonio/Documents/M.C.C/Tesis/Dataset/Microsoft/heads/seq-02/";
-const string vocDir = "./Vocabulary/voc_TUM_ORB_ORB.yml.gz";
+const string baseDir = "/home/antonio/Documents/M.C.C/Tesis/Dataset/TUM/rgbd_dataset_freiburg1_plant/";
+const string vocDir = "./Vocabulary/voc_TUM_FAST_BRIEF.yml.gz";
 
 int main()
 {
-    Dataset::Ptr dataset(new DatasetMicrosoft());
+    Dataset::Ptr dataset(new DatasetTUM());
     dataset->open(baseDir);
     dataset->print(cout);
 
-    Extractor::Ptr extractor(new Extractor(Extractor::ORB, Extractor::ORB, Extractor::ADAPTIVE));
-    extractor->_gridResolution = 5;
+    Extractor::Ptr extractor(new Extractor(Extractor::SVO, Extractor::BRIEF, Extractor::NORMAL));
+    extractor->_gridResolution = 3;
     extractor->print(cout);
 
     cout << "Loading Vocabulary..." << flush;
