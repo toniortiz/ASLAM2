@@ -42,7 +42,7 @@ void DenseMapDrawer::run()
                 else {
                     kf->createPointCloud(3);
                     kf->downsample(0.02f);
-                    kf->passThroughFilter("z", 0.1f, 5.0f);
+                    //kf->passThroughFilter("z", 0.1f, 8.0f);
                     kf->statisticalFilter(50, 1.0);
                     update(kf);
                 }
@@ -57,7 +57,7 @@ void DenseMapDrawer::run()
                 if (!kf->hasPointCloud()) {
                     kf->createPointCloud(3);
                     kf->downsample(0.02f);
-                    kf->passThroughFilter("z", 0.1f, 5.0f);
+                    //kf->passThroughFilter("z", 0.1f, 8.0f);
                     kf->statisticalFilter(50, 1.0);
 
                     update(kf);
