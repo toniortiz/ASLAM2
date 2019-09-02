@@ -307,13 +307,6 @@ bool Tracking::trackWithMotionModel()
 
     _viewer->setRansacError(ransac._rmse);
 
-    if (ransac._rmse > 1.0f) {
-        Gicp icp(_prevFrame, _curFrame, ransac._inliers);
-        icp.setIterations(10).setCorrespondenceDistance(0.06);
-        icp.compute(ransac._T);
-        _viewer->setIcpScore(icp._score);
-    }
-
     {
         unique_lock<mutex> locks(_stats.mMutex);
         _stats.acumMatches += matches.size();

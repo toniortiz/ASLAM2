@@ -13,11 +13,11 @@ MapDrawer::MapDrawer(MapPtr pMap)
     : _map(pMap)
     , _cameraPose(SE3(Mat44::Identity()))
 {
-    _KFsize = 0.03;
+    _KFsize = 0.05;
     _KFlineWidth = 1;
     _graphLineWidth = 0.9f;
     _pointSize = 2;
-    _cameraSize = 0.05;
+    _cameraSize = 0.07;
     _cameraLineWidth = 3;
 }
 

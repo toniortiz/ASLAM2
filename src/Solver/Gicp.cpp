@@ -31,7 +31,7 @@ Gicp::Gicp(FramePtr pF1, FramePtr pF2, const vector<cv::DMatch>& vMatches)
     _srcNormals->points.reserve(_srcCloud->points.size());
     _tgtNormals->points.reserve(_tgtCloud->points.size());
 
-    double radius = 0.3;
+    double radius = 0.25;
     thread t1(&Gicp::computeNormals, this, _srcCloud, _srcNormals, radius);
     thread t2(&Gicp::computeNormals, this, _tgtCloud, _tgtNormals, radius);
     t1.join();

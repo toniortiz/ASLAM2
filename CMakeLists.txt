@@ -126,6 +126,7 @@ add_library(${PROJECT_NAME} SHARED
     src/IO/DatasetICL.cpp
     src/IO/DatasetTUM.cpp
     src/IO/DatasetMicrosoft.cpp
+    src/IO/DatasetAICL.cpp
 
     # Drawer
     src/Drawer/MapDrawer.cpp

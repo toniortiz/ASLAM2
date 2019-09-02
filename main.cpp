@@ -1,5 +1,6 @@
 #include "Features/Extractor.h"
 #include "IO/Dataset.h"
+#include "IO/DatasetAICL.h"
 #include "IO/DatasetCORBS.h"
 #include "IO/DatasetICL.h"
 #include "IO/DatasetMicrosoft.h"
@@ -11,17 +12,17 @@
 
 using namespace std;
 
-const string baseDir = "/home/antonio/Documents/M.C.C/Tesis/Dataset/TUM/rgbd_dataset_freiburg1_room/";
+const string baseDir = "/home/antonio/Documents/M.C.C/Tesis/Dataset/AICL/livingroom1/";
 const string vocDir = "./Vocabulary/voc_TUM_ORB_ORB.yml.gz";
 
 int main()
 {
-    Dataset::Ptr dataset(new DatasetTUM());
+    Dataset::Ptr dataset(new DatasetAICL());
     dataset->open(baseDir);
     dataset->print(cout);
 
     Extractor::Ptr extractor(new Extractor(Extractor::ORB, Extractor::ORB, Extractor::ADAPTIVE));
-    extractor->_gridResolution = 5;
+    extractor->_gridResolution = 3;
     extractor->print(cout);
 
     cout << "Loading Vocabulary..." << flush;
